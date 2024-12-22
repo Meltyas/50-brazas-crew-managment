@@ -1,0 +1,25 @@
+{
+  "name": "50-brazas-crew-managment",
+  "title": "50 Brazas Crew Management",
+  "description": "A module to manage crew members and their pay in the 50 Brazas setting.",
+  "version": "12.0.0",
+  "authors": [
+    {
+      "name": "Meltyas",
+      "email": "your.email@example.com",
+      "url": "https://yourwebsite.com"
+    }
+  ],
+  "minimumCoreVersion": "12",
+  "compatibleCoreVersion": "12",
+  "compatibility": {
+    "minimum": "0.6.5",
+    "verified": "12"
+  },
+  "scripts": [],
+  "styles": ["styles/crew-manager.css"],
+  "esmodules": ["scripts/50-brazas-main.js"],
+  "socket": false,
+  "manifest": "",
+  "download": ""
+}

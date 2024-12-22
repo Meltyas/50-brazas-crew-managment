@@ -1,0 +1,217 @@
+@import url("https://fonts.googleapis.com/css2?family=Miniver&display=swap");
+
+.crew-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.crew-management-top {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.crew-boat-pay-members {
+  display: flex;
+}
+
+.boat-pay-label {
+  display: flex;
+  align-items: center;
+}
+
+.crew-boat-pay-container {
+  align-items: center;
+  display: flex;
+}
+
+input.crew-boat-pay-input {
+  display: flex;
+  width: 30px;
+  padding: 10px;
+  margin-left: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.save-button {
+  width: 2rem;
+}
+
+.crew-member {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  width: calc(50%);
+  min-width: calc(50%);
+  max-width: calc(50%);
+}
+
+.placeholder-crew-text {
+  text-align: center;
+  color: #d21f3c;
+}
+
+.crew-member-info {
+  overflow: hidden;
+  width: 45%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.crew-member-name {
+  font-weight: 600;
+}
+.crew-member img {
+  border: 0;
+  margin-right: 8px;
+  border-radius: 5px;
+  width: 40px;
+  height: 40px;
+}
+
+.crew-info .name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+.crew-info .pay {
+  font-size: 12px;
+  color: #555;
+}
+
+.pay-chat {
+  font-family: "Miniver", sans-serif;
+  background-image: url("https://i.imgur.com/9yxaUcd.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 15px 15px 40px 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px;
+  margin: 3px;
+}
+
+.pay-chat-title {
+  text-align: center;
+}
+
+.pay-chat-total-pay {
+  font-family: "Miniver", sans-serif;
+  font-size: 18px;
+}
+
+.pay-chat-stain {
+  width: 100px;
+  height: auto;
+  border: 0;
+  position: absolute;
+  top: -90px;
+  left: -10px;
+  opacity: 0.8;
+  filter: blur(1px);
+}
+
+.pay-chat-seal {
+  width: 100px;
+  height: auto;
+  border: 0;
+  position: absolute;
+  top: -58px;
+  right: -22px;
+  opacity: 0.8;
+  filter: sepia(100%) hue-rotate(320deg) saturate(3);
+}
+
+.pay-chat-footer {
+  position: relative;
+}
+
+.crew-member button {
+  width: 16px;
+  background-color: #ddd;
+  color: white;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 4px;
+  font-size: 12px;
+}
+.btn {
+  margin-right: 5px;
+}
+
+.btn:last-child {
+  margin-right: 0;
+}
+
+.crew-member button.btn-remove {
+  background-color: red;
+}
+
+.crew-member button.btn-increase {
+  background-color: #5cb85c;
+}
+
+.crew-member button.btn-decrease {
+  background-color: #f0ad4e;
+  margin-left: 1rem;
+}
+
+.crew-member button:hover {
+  opacity: 0.8;
+}
+
+/* modules/crew-manager/styles/crew-manager.css */
+
+.tab-navigation {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  text-align: center;
+  font-size: 14px;
+}
+
+.tab-button.active {
+  background-color: #ddd;
+  font-weight: bold;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content:first-child {
+  display: block;
+}
+
+.pay-chat-td {
+  padding: 10px 5px;
+}
+
+.pay-chat-table-title {
+}
+
+.pay-chat-table-group {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.pay-chat-table-image {
+  border-radius: 3px;
+  border: 0;
+  width: 24px;
+  height: 24px;
+  filter: sepia(100%);
+}
