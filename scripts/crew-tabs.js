@@ -5,6 +5,7 @@ import {
   increasePay,
   removeCrewMember,
   renderCrewList,
+  validateCrewList,
 } from "./crew-admin.js";
 
 import { activatePaymentListeners } from "./crew-pay.js";
@@ -38,7 +39,11 @@ export default class CrewManagerApp extends Application {
     html.find(".tab-button[data-tab='crew-management-tab']").addClass("active"); // Set the Crew Management tab button as active
 
     // Tab Switching with Animation
-    html.find(".tab-button").click((event) => {
+    html.find(".tab-button").click(async (event) => {
+      await validateCrewList();
+      const { crewList, crewNumber, boatPay } = await fetchCrewData();
+      renderCrewList(html, crewList, crewNumber, boatPay);
+
       const tab = $(event.currentTarget).data("tab");
       const targetTab = html.find(`#${tab}`);
       console.log(targetTab);
@@ -92,6 +97,8 @@ export default class CrewManagerApp extends Application {
 
     // Pay Splitting Functionality
     html.find("#split-pay").click(async () => {
+      await validateCrewList();
+
       const totalPay = parseFloat(html.find("#total-pay-input").val());
       if (isNaN(totalPay) || totalPay <= 0) {
         ui.notifications.warn("Please enter a valid total amount to split.");

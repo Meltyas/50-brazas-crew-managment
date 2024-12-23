@@ -1,10 +1,10 @@
+import { validateCrewList } from "./crew-admin.js";
 import CrewManagerApp from "./crew-tabs.js";
-
 Hooks.once("init", () => {
   console.log("Crew Manager | Initializing Crew Manager Module");
 });
 
-Hooks.once("ready", () => {
+Hooks.once("ready", async () => {
   game.settings.register("crew-manager", "crewData", {
     name: "Crew Data",
     hint: "Stores crew management data.",
@@ -24,6 +24,7 @@ Hooks.once("ready", () => {
 
   // Save updated settings
   game.settings.set("crew-manager", "crewData", currentData);
+  await validateCrewList();
 });
 
 // Add the Crew Manager button to the Scene Controls

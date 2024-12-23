@@ -215,3 +215,22 @@ input.crew-boat-pay-input {
   height: 24px;
   filter: sepia(100%);
 }
+
+.pay-results-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pay-results-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-basis: 33%;
+}
+
+.pay-results-item.ship {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-basis: 100%;
+}

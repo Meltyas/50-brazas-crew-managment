@@ -1,4 +1,4 @@
-import { fetchCrewData } from "./crew-admin.js";
+import { fetchCrewData, validateCrewList } from "./crew-admin.js";
 let paymentDispatcherData = {};
 
 export async function calculateAndDistributePay(html, totalPay) {
@@ -17,10 +17,9 @@ export async function calculateAndDistributePay(html, totalPay) {
   // Distribute pay
   const payResults = crewList.map((crew) => {
     return {
-      name: crew.name,
       id: crew.id,
-      img: crew.img,
       pay: crew.pay,
+      actorId: crew.actorId,
       amount: ((crew.pay / totalShares) * totalPay).toFixed(0),
     };
   });
@@ -32,7 +31,7 @@ export async function calculateAndDistributePay(html, totalPay) {
   let resultsHTML = "<h3>Pay Distribution</h3>";
   if (boatPay >= 1) {
     resultsHTML += `
-      <div style="display: flex; align-items: center; margin-bottom: 10px;">
+      <div class='pay-results-item ship' style="display: flex; align-items: center; margin-bottom: 10px;">
         <div>
           <strong>Partes para el Barco</strong><br/>
           <span>${boatPay} Partes, 🪙${(
@@ -41,24 +40,37 @@ export async function calculateAndDistributePay(html, totalPay) {
     ).toFixed(0)}</span>
         </div>
       </div>
+      <div class='pay-results-container'>
     `;
   }
 
   payResults.forEach((result) => {
-    paymentDispatcherData[result.name] = {
+    console.log("result", result);
+    const actor = game.actors.get(result.actorId);
+
+    if (!actor) {
+      console.warn(
+        `Actor with ID ${crew.actorId} not found. Removing from list.`
+      );
+      return; // Skip this entry if the actor is not found
+    }
+
+    paymentDispatcherData[actor.name] = {
       tokenId: result.id,
+      actorId: result.actorId,
       amount: parseInt(result.amount),
     };
     resultsHTML += `
-      <div style="display: flex; align-items: center; margin-bottom: 10px;">
-        <img src="${result.img}" alt="${result.name}" width="40" height="40" style="margin-right: 10px; border-radius: 5px;"/>
+      <div class='pay-results-item ship'>
+        <img src="${actor.img}" alt="${actor.name}" width="40" height="40" style="margin-right: 10px; border-radius: 5px;"/>
         <div>
-          <strong>${result.name}</strong><br/>
+          <strong>${actor.name}</strong><br/>
           <small>Pay: ${result.pay}, 🪙${result.amount}</small>
         </div>
       </div>
     `;
   });
+  resultsHTML += `</div>`;
   payContainer.html(resultsHTML);
 }
 
@@ -80,36 +92,31 @@ export async function activatePaymentListeners(html) {
   });
 
   if (!confirmPayment) return;
-  for (const [name, data] of Object.entries(paymentDispatcherData)) {
-    const token = canvas.tokens.get(data.tokenId);
+  console.log("paymentDispatcherData", paymentDispatcherData);
+  for (const [name, crew] of Object.entries(paymentDispatcherData)) {
+    const actor = game.actors.get(crew.actorId);
+    console.log("actor", actor);
 
-    console.log(data);
+    if (!actor) {
+      console.warn(
+        `Actor with ID ${crew.actorId} not found. Removing from list.`
+      );
+      return; // Skip this entry if the actor is not found
+    }
 
-    console.log(token);
-    const actor = token.actor;
-    console.log(actor);
     if (actor) {
       await actor.update({
-        "system.details.currency": actor.system.details.currency + data.amount,
+        "system.details.currency": actor.system.details.currency + crew.amount,
       });
     }
     html.find("#make-payment-button").hide();
     html.find("#total-pay-input").val("");
   }
   paymentDispatcherData = {};
-  // Process payments
-  // for (const [name, data] of Object.entries(paymentDispatcherData)) {
-  //   const token = canvas.tokens.get(data.tokenId);
-  //   if (token) {
-  //     await token.actor.update({
-  //       "system.currency.gp": token.actor.system.currency.gp + data.amount,
-  //     });
-  //   }
-  // }
-  // paymentDispatcherData = {};
 }
 
 export async function printPayToChat(totalPay) {
+  await validateCrewList();
   const { crewList, boatPay = 0 } = await fetchCrewData();
 
   // Calculate total shares
@@ -123,9 +130,17 @@ export async function printPayToChat(totalPay) {
 
   // Distribute pay
   const payResults = crewList.map((crew) => {
+    const actor = game.actors.get(crew.actorId);
+
+    if (!actor) {
+      console.warn(
+        `Actor with ID ${crew.actorId} not found. Removing from list.`
+      );
+      return; // Skip this entry if the actor is not found
+    }
     return {
-      name: crew.name,
-      img: crew.img,
+      name: actor.name,
+      img: actor.img,
       pay: crew.pay,
       amount: ((crew.pay / totalShares) * totalPay).toFixed(0),
     };
@@ -199,7 +214,6 @@ export async function printPayToChat(totalPay) {
         </tr>`;
     });
 
-  console.timeLog(paymentDispatcherData);
   messageContent += `  </tbody></table>`;
   messageContent += ` <div class="pay-chat-footer">
     <img src="https://i.imgur.com/ld7PMMo_d.png" class="pay-chat-stain">
