@@ -28,11 +28,12 @@
 
 input.crew-boat-pay-input {
   display: flex;
-  width: 30px;
+  width: 40px;
   padding: 10px;
   margin-left: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  text-align: center;
 }
 
 .save-button {
@@ -233,4 +234,16 @@ input.crew-boat-pay-input {
   align-items: center;
   margin-bottom: 10px;
   flex-basis: 100%;
+}
+
+.pay-chat-member-list {
+  display: flex;
+  gap: 4px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+  filter: sepia(100%);
+}
+.pay-chat-image-list {
+  border: 0;
+  border-radius: 32px;
 }

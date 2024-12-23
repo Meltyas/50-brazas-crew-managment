@@ -196,7 +196,7 @@ export async function printPayToChat(totalPay) {
         <tr>
           <td colspan="3" style="padding: 10px 5px;">
         <strong>${pay} ${payLabel}</strong> - Total: 🪙${totalAmount} (${totalSharesForGroup} Partes)<br>
-        <div style="display: flex; gap: 5px; margin-top: 5px;">
+        <div class="pay-chat-member-list">
           ${group.members
             .map(
               (member) => `
