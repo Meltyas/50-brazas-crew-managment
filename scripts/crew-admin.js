@@ -6,41 +6,56 @@ export async function clearCrewList() {
 }
 
 export async function fetchCrewData() {
-  await validateCrewList();
   let data = game.settings.get("crew-manager", "crewData");
-  console.log(data);
 
-  // Ensure skeleton structure if missing
   if (!data || !data.crewList) {
-    data = { crewList: [], crewNumber: 0, boatPay: 0 };
-    await saveCrewData(data.crewList, data.boatPay);
+    data = {
+      crewList: [],
+      crewNumber: 0,
+      boatPay: 0,
+      navigation: {
+        navigator: null,
+        caster: null,
+        helpers: [],
+        boatHandling: 0,
+        boatMovement: 0,
+        handlingMod: 0,
+      },
+    };
+    await saveCrewData(data.crewList, data.boatPay, data.navigation);
   }
 
-  const crewList = Array.isArray(data.crewList) ? data.crewList : [];
-  const crewNumber = crewList.length;
-  const boatPay = data.boatPay;
-
-  return { crewList, crewNumber, boatPay };
+  return {
+    crewList: Array.isArray(data.crewList) ? data.crewList : [],
+    crewNumber: data.crewList.length,
+    boatPay: data.boatPay,
+    navigation: data.navigation || {
+      navigator: null,
+      caster: null,
+      helpers: [],
+      boatHandling: 0,
+      boatMovement: 0,
+      handlingMod: 0,
+    },
+  };
 }
 
-export async function saveCrewData(crewList, boatPay) {
+export async function saveCrewData(crewList, boatPay, navigation) {
   const crewNumber = crewList.length;
+  const clonedNavigation = foundry.utils.deepClone(navigation);
+  console.log("Saving Data (Cloned Navigation):", {
+    crewList,
+    boatPay,
+    navigation: clonedNavigation,
+  });
+
   await game.settings.set("crew-manager", "crewData", {
     crewList,
     crewNumber,
     boatPay,
+    navigation: clonedNavigation,
   });
 }
-
-// export async function updateTokenNamesToActorNames() {
-//   const tokens = canvas.tokens.placeables;
-//   for (const token of tokens) {
-//     const actorName = token.actor?.name;
-//     if (actorName && token.name !== actorName) {
-//       await token.document.update({ name: actorName });
-//     }
-//   }
-// }
 
 export async function addCrewMembers() {
   const selected = canvas.tokens.controlled;
@@ -81,64 +96,121 @@ export async function addCrewMembers() {
   });
 
   if (addedCount > 0) {
-    const { boatPay } = await fetchCrewData();
-    await saveCrewData(crewList, boatPay);
+    const { boatPay, navigation } = await fetchCrewData();
+    await saveCrewData(crewList, boatPay, navigation);
   }
 }
 
 export async function removeCrewMember(index) {
-  const { crewList } = await fetchCrewData();
+  const { crewList, boatPay, navigation } = await fetchCrewData();
   crewList.splice(index, 1);
-  const { boatPay } = await fetchCrewData();
-  await saveCrewData(crewList, boatPay);
+  await saveCrewData(crewList, boatPay, navigation);
 }
 
 export async function increasePay(index) {
-  const { crewList } = await fetchCrewData();
+  const { crewList, boatPay, navigation } = await fetchCrewData();
   crewList[index].pay += 1;
-  const { boatPay } = await fetchCrewData();
-  await saveCrewData(crewList, boatPay);
+  await saveCrewData(crewList, boatPay, navigation);
 }
 
 export async function decreasePay(index) {
-  const { crewList } = await fetchCrewData();
+  const { crewList, boatPay, navigation } = await fetchCrewData();
   if (crewList[index].pay > 0) {
     crewList[index].pay -= 1;
-    const { boatPay } = await fetchCrewData();
-    await saveCrewData(crewList, boatPay);
+    await saveCrewData(crewList, boatPay, navigation);
   }
 }
 
-async function cleanCrewData(crewList) {
-  const validCrewList = crewList.filter((crew) =>
-    game.actors.get(crew.actorId)
-  );
-  if (validCrewList.length !== crewList.length) {
-    console.warn("Invalid actors found in crew list. Cleaning up...");
+async function cleanCrewData(crewList, navigation) {
+  console.log("Before Cleaning Navigation:", navigation);
+
+  // Validate Navigator
+  if (navigation.navigator) {
+    const navigatorActor = game.actors.get(navigation.navigator.actorId);
+    if (!navigatorActor) {
+      console.warn(
+        `Navigator with ID ${navigation.navigator.actorId} not found. Removing from navigation.`
+      );
+      navigation.navigator = null;
+    }
   }
-  return validCrewList;
+
+  // Validate Caster
+  if (navigation.caster) {
+    const casterActor = game.actors.get(navigation.caster.actorId);
+    if (!casterActor) {
+      console.warn(
+        `Caster with ID ${navigation.caster.actorId} not found. Removing from navigation.`
+      );
+      navigation.caster = null;
+    }
+  }
+
+  // Validate Helpers
+  navigation.helpers = navigation.helpers.filter((helper) => {
+    const helperActor = game.actors.get(helper.actorId);
+    if (!helperActor) {
+      console.warn(
+        `Helper with ID ${helper.actorId} not found. Removing from navigation.`
+      );
+      return false;
+    }
+    return true;
+  });
+
+  if (typeof navigation.boatHandling !== "number") navigation.boatHandling = 0;
+  if (typeof navigation.boatMovement !== "number") navigation.boatMovement = 0;
+  if (typeof navigation.handlingMod !== "number") navigation.handlingMod = 0;
+
+  console.log("After Cleaning Navigation:", navigation);
+  return { crewList, navigation };
 }
 
 export async function validateCrewList() {
-  let { crewList, boatPay } = game.settings.get("crew-manager", "crewData");
-  crewList = Array.isArray(crewList) ? crewList : []; // Ensure crewList is always an array
+  let { crewList, boatPay, navigation } = game.settings.get(
+    "crew-manager",
+    "crewData"
+  );
 
-  const validCrewList = await cleanCrewData(crewList);
+  console.log("validateCrewList (Before Clean):", { crewList, navigation });
 
-  if (validCrewList.length !== crewList.length) {
-    await saveCrewData(validCrewList, boatPay); // Save only valid data
+  const validatedData = await cleanCrewData(crewList, navigation);
+
+  console.log("validateCrewList (After Clean):", { crewList, navigation });
+
+  if (validatedData.crewList.length !== crewList.length) {
+    await saveCrewData(
+      validatedData.crewList,
+      boatPay,
+      validatedData.navigation
+    );
   }
 
-  return { crewList: validCrewList, boatPay };
+  return {
+    crewList: validatedData.crewList,
+    boatPay,
+    navigation: validatedData.navigation,
+  };
 }
 
-export function renderCrewList(html, crewList, crewNumber, boatPay) {
+export async function renderCrewList(html, crewList, crewNumber, boatPay) {
   const crewListContainer = html.find("#crew-list");
   const crewNumberElement = html.find("#crew-number");
   const boatPayElement = html.find("#boat-pay");
 
   crewNumberElement.text(`Crew Number: ${crewNumber}`);
   boatPayElement.val(boatPay);
+
+  const { navigation } = await fetchCrewData();
+
+  const boatHandlingElement = html.find("#boat-handling");
+  boatHandlingElement.val(navigation.boatHandling);
+
+  const boatMovementElement = html.find("#boat-movement");
+  boatMovementElement.val(navigation.boatMovement);
+
+  const handlingModElement = html.find("#handling-mod");
+  handlingModElement.val(navigation.handlingMod);
 
   if (crewList.length === 0) {
     crewListContainer.html(
@@ -170,6 +242,15 @@ export function renderCrewList(html, crewList, crewNumber, boatPay) {
         <button class="btn btn-remove" style="background-color: red; color: white;">X</button>
       </div>
     `;
+
+    // Explicitly set values for boat-handling, boat-movement, and handling-mod
+    if (navigation) {
+      html.find("#boat-handling").val(navigation.boatHandling || 0);
+      html.find("#boat-movement").val(navigation.boatMovement || 0);
+      html.find("#handling-mod").val(navigation.handlingMod || 0);
+    } else {
+      console.warn("Navigation data missing or invalid.");
+    }
   });
 
   crewListContainer.html(listHTML);
@@ -181,8 +262,29 @@ export function renderCrewList(html, crewList, crewNumber, boatPay) {
       return;
     }
 
-    const { crewList } = await fetchCrewData();
-    await saveCrewData(crewList, newBoatPay);
+    const { crewList, navigation } = await fetchCrewData();
+    await saveCrewData(crewList, newBoatPay, navigation);
     ui.notifications.info("Boat pay updated successfully.");
+  });
+
+  html.find("#boat-handling").change(async () => {
+    const newBoatHandling = parseInt(html.find("#boat-handling").val(), 10);
+    const { crewList, boatPay, navigation } = await fetchCrewData();
+    navigation.boatHandling = newBoatHandling;
+    await saveCrewData(crewList, boatPay, navigation);
+  });
+
+  html.find("#boat-movement").change(async () => {
+    const newBoatMovement = parseInt(html.find("#boat-movement").val(), 10);
+    const { crewList, boatPay, navigation } = await fetchCrewData();
+    navigation.boatMovement = newBoatMovement;
+    await saveCrewData(crewList, boatPay, navigation);
+  });
+
+  html.find("#handling-mod").change(async () => {
+    const newHandlingMod = parseInt(html.find("#handling-mod").val(), 10);
+    const { crewList, boatPay, navigation } = await fetchCrewData();
+    navigation.handlingMod = newHandlingMod;
+    await saveCrewData(crewList, boatPay, navigation);
   });
 }

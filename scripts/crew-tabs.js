@@ -12,6 +12,17 @@ import { activatePaymentListeners } from "./crew-pay.js";
 
 import { calculateAndDistributePay, printPayToChat } from "./crew-pay.js";
 
+import {
+  addCaster,
+  addHelpers,
+  addNavigator,
+  crewBoatingCheck,
+  removeCaster,
+  removeHelper,
+  removeNavigator,
+  renderNavigationRoles,
+} from "./crew-navigation.js";
+
 export default class CrewManagerApp extends Application {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -43,6 +54,7 @@ export default class CrewManagerApp extends Application {
       await validateCrewList();
       const { crewList, crewNumber, boatPay } = await fetchCrewData();
       renderCrewList(html, crewList, crewNumber, boatPay);
+      renderNavigationRoles();
 
       const tab = $(event.currentTarget).data("tab");
       const targetTab = html.find(`#${tab}`);
@@ -106,7 +118,6 @@ export default class CrewManagerApp extends Application {
       }
       await calculateAndDistributePay(html, totalPay);
     });
-
     html.find("#print-to-chat").click(async () => {
       const totalPay = parseFloat(html.find("#total-pay-input").val());
       console.log("totalPay", totalPay);
@@ -119,8 +130,109 @@ export default class CrewManagerApp extends Application {
       await printPayToChat(totalPay);
     });
 
+    // Navigation role buttons
+    html.find("#add-navigator").click(async () => {
+      await addNavigator();
+      const { crewList, crewNumber, boatPay, navigation } =
+        await fetchCrewData();
+      renderCrewList(html, crewList, crewNumber, boatPay, navigation);
+    });
+
+    html.find("#add-spellcaster").click(async () => {
+      await addCaster();
+      const { crewList, crewNumber, boatPay, navigation } =
+        await fetchCrewData();
+      renderCrewList(html, crewList, crewNumber, boatPay, navigation);
+    });
+
+    html.find("#add-helper").click(async () => {
+      await addHelpers();
+      const { crewList, crewNumber, boatPay, navigation } =
+        await fetchCrewData();
+      renderCrewList(html, crewList, crewNumber, boatPay, navigation);
+    });
+    // Remove Navigator
+    html.on("click", "#remove-navigator", async (event) => {
+      const index = $(event.currentTarget).closest(".navigator").data("index");
+      await removeNavigator(index);
+      const { crewList, crewNumber, boatPay, navigation } =
+        await fetchCrewData();
+      renderCrewList(html, crewList, crewNumber, boatPay, navigation);
+    });
+
+    // Remove Spellcaster
+    html.on("click", "#remove-spellcaster", async (event) => {
+      const index = $(event.currentTarget)
+        .closest(".spellcaster")
+        .data("index");
+      await removeCaster(index);
+      const { crewList, crewNumber, boatPay, navigation } =
+        await fetchCrewData();
+      renderCrewList(html, crewList, crewNumber, boatPay, navigation);
+    });
+
+    // Remove Helper
+    html.on("click", "#remove-helper", async (event) => {
+      const index = $(event.currentTarget)
+        .closest(".role-member")
+        .data("index");
+      console.log(index);
+      await removeHelper(index);
+      const { crewList, crewNumber, boatPay, navigation } =
+        await fetchCrewData();
+      renderCrewList(html, crewList, crewNumber, boatPay, navigation);
+    });
+
+    html.on("click", "#navigate-button", async (event) => {
+      event.preventDefault();
+      await crewBoatingCheck();
+    });
+
+    // Boat Stats Input Change Handlers
+    html.find("#boat-handling").on("input", (event) => {
+      const boatHandling = parseFloat(event.target.value);
+      if (isNaN(boatHandling)) {
+        ui.notifications.warn("Please enter a valid number for Boat Handling.");
+        return;
+      }
+      // Handle boatHandling change logic here
+      console.log("Boat Handling:", boatHandling);
+    });
+
+    html.find("#boat-movement").on("input", (event) => {
+      const boatMovement = parseFloat(event.target.value);
+      if (isNaN(boatMovement)) {
+        ui.notifications.warn("Please enter a valid number for Boat Movement.");
+        return;
+      }
+      // Handle boatMovement change logic here
+      console.log("Boat Movement:", boatMovement);
+    });
+
+    html.find("#handling-mod").on("input", (event) => {
+      const handlingMod = parseFloat(event.target.value);
+      if (isNaN(handlingMod)) {
+        ui.notifications.warn("Please enter a valid number for Handling Mod.");
+        return;
+      }
+      // Handle handlingMod change logic here
+      console.log("Handling Mod:", handlingMod);
+    });
+
+    const consumeResource = game.settings.get(
+      "crew-manager",
+      "consumeResource"
+    );
+    html.find("#consume-resource").prop("checked", consumeResource);
+
+    html.find("#consume-resource").change(async (event) => {
+      const isChecked = event.target.checked;
+      await game.settings.set("crew-manager", "consumeResource", isChecked);
+      ui.notifications.info(`Consume Resource setting updated: ${isChecked}`);
+    });
+
     // Initial Render
-    const { crewList, crewNumber, boatPay } = await fetchCrewData();
-    renderCrewList(html, crewList, crewNumber, boatPay);
+    const { crewList, crewNumber, boatPay, navigation } = await fetchCrewData();
+    renderCrewList(html, crewList, crewNumber, boatPay, navigation);
   }
 }

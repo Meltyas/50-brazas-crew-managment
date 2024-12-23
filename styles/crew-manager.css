@@ -247,3 +247,196 @@ input.crew-boat-pay-input {
   border: 0;
   border-radius: 32px;
 }
+
+.navigation-main-roles {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+}
+
+.navigation-main-roles .role-section {
+  width: calc(50% - 1rem);
+  margin-right: 1rem;
+}
+
+.navigator-slot-wrapper {
+  display: flex;
+  justify-content: space-around;
+  gap: 2rem;
+}
+
+.navigator-helper-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+.navigation-helpers .role-slot {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.navigator-helper-wrapper .role-member {
+  width: calc(25% - 1rem);
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.role-member {
+  position: relative;
+}
+
+.role-member span {
+  position: absolute;
+  top: 0.25rem;
+  right: 50%;
+  transform: translateX(50%);
+  background: #000;
+  color: #fff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  font-size: 12px;
+  opacity: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  transition: opacity 0.3s;
+}
+
+.role-member:hover span {
+  opacity: 1;
+}
+
+.role-member img {
+  border: 0;
+  border-radius: 100%;
+}
+.chat-roll-summary {
+  font-family: Arial, sans-serif;
+}
+
+.chat-roll-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.chat-roll-group {
+  margin-top: 10px;
+}
+
+.chat-roll-role-title {
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.chat-roll-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.chat-roll-item {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.chat-roll-wrapper {
+  display: flex;
+  align-items: flex-start;
+}
+
+.chat-roll-img {
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.chat-roll-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-roll-name {
+  font-weight: bold;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 1rem);
+}
+
+.chat-roll-details {
+  display: flex;
+  font-size: 12px;
+  color: #555;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.boat-stat-inputs {
+  display: flex;
+  gap: 1rem;
+}
+
+.boat-stat-inputs {
+  margin-bottom: 1rem;
+}
+
+.chat-roll-extra {
+  font-weight: 100;
+  font-size: 0.8rem;
+}
+
+.chat-roll-helping-bonus {
+  font-size: 12px;
+}
+
+.chat-roll-navigation-movement {
+  background: #4d4dff;
+  font-weight: bold;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.navigator-lost {
+  background: red;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 23px;
+  padding: 0.5rem 1rem;
+  width: calc(100% - 2rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.resource-holder {
+  background: #500044;
+  color: #fff;
+  border-radius: 5px;
+  margin-top: 0.5rem;
+  text-align: center;
+  padding: 0.25rem 0.5rem;
+}
+.chat-roll-result {
+  background: #452044;
+  color: #fff;
+  padding: 0.25rem;
+}
+.chat-roll-modifier {
+  background: #352044;
+  color: #fff;
+  padding: 0.25rem;
+}
+.chat-roll-type {
+  background: #252044;
+  color: #fff;
+  padding: 0.25rem;
+}

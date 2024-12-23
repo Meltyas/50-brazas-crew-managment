@@ -11,7 +11,21 @@ Hooks.once("ready", async () => {
     scope: "world",
     config: false,
     type: Object,
-    default: { crewList: [], crewNumber: 0, boatPay: 2 },
+    default: {
+      crewList: [],
+      crewNumber: 0,
+      boatPay: 2,
+      navigation: { navigator: null, caster: null, helpers: [] },
+    },
+  });
+
+  game.settings.register("crew-manager", "consumeResource", {
+    name: "Consume Resource",
+    hint: "Enable this to consume a resource when certain actions are performed.",
+    scope: "world", // "world" for global setting, or "client" for per-user setting
+    config: true,
+    type: Boolean,
+    default: false, // Default to unchecked
   });
 
   // Get current settings

@@ -6,6 +6,9 @@
       Crew Management
     </button>
     <button class="tab-button" data-tab="pay-splitting">Pay Splitting</button>
+    <button class="tab-button" data-tab="ship-navigation">
+      Ship Navigation
+    </button>
   </div>
 
   <!-- Tab Content -->
@@ -40,7 +43,7 @@
 
     <div>
       <button
-        id="add-crew-members"
+        id="add-crew-Padnm"
         class="button"
         style="width: 100%; padding: 10px"
       >
@@ -130,6 +133,114 @@
     </div>
     <div style="margin-top: 20px">
       <div id="pay-results" class="pay-results-wrapper"></div>
+    </div>
+  </div>
+
+  <div id="ship-navigation" class="tab-content" style="display: none">
+    <div style="text-align: center; margin-bottom: 20px">
+      <button
+        id="navigate-button"
+        class="button"
+        style="padding: 10px 20px; font-size: 16px"
+      >
+        Navigate 🚢
+      </button>
+    </div>
+    <div class="boat-stat-inputs">
+      <div class="boat-stat">
+        <label for="consume-resource">
+          <input type="checkbox" id="consume-resource" /> Consume Resource
+        </label>
+      </div>
+
+      <div class="boat-stat">
+        <label for="boat-handling"><strong>Boat Handling:</strong></label>
+        <input
+          type="number"
+          id="boat-handling"
+          value="0"
+          style="
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          "
+          placeholder="Enter boat handling"
+        />
+      </div>
+      <div class="boat-stat">
+        <label for="boat-movement"><strong>Boat Movement:</strong></label>
+        <input
+          type="number"
+          id="boat-movement"
+          value="0"
+          style="
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          "
+          placeholder="Enter boat movement"
+        />
+      </div>
+      <div class="boat-stat">
+        <label for="handling-mod"><strong>Handling Mod:</strong></label>
+        <input
+          type="number"
+          id="handling-mod"
+          value="0"
+          style="
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          "
+          placeholder="Enter handling mod"
+        />
+      </div>
+    </div>
+
+    <div class="navigation-main-roles">
+      <div class="role-section">
+        <h3>Navigator</h3>
+        <div class="navigator-slot-wrapper">
+          <div id="navigator-slot" class="role-slot">
+            <p class="empty-slot-text">No navigator assigned</p>
+          </div>
+          <div class="role-section-wrapper">
+            <button id="add-navigator" class="button">Add</button>
+            <button id="remove-navigator" class="button">Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="role-section">
+        <h3>Zephyr Spellcaster</h3>
+        <div class="navigator-slot-wrapper">
+          <div id="spellcaster-slot" class="role-slot">
+            <p class="empty-slot-text">No spellcaster assigned</p>
+          </div>
+          <div class="role-section-wrapper">
+            <button id="add-spellcaster" class="button">Add</button>
+            <button id="remove-spellcaster" class="button">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="navigation-helpers">
+      <div class="role-section">
+        <h3>Helpers</h3>
+        <button id="add-helper" class="button">Add Helper</button>
+        <div class="navigator-helper-wrapper">
+          <div id="helpers-list" class="role-slot">
+            <p class="empty-slot-text">No helpers assigned</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
