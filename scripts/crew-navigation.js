@@ -544,6 +544,8 @@ export async function crewBoatingCheck() {
     const rollTotal = roll.total;
     if (rollTotal >= 8) {
       navigationExtraMovement += 2; // Add movement for successful spellcasting
+    } else if (rollTotal >= 4) {
+      navigationExtraMovement += 1; // Add movement for successful spellcasting
     }
 
     // Add to roll details with type
