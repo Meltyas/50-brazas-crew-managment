@@ -352,34 +352,60 @@ export async function crewBoatingCheck() {
         continue;
       }
 
-      // Custom roll formula
-      const rollFormula = `{1d10x,1d6x}kh`;
-      const roll = await new Roll(rollFormula).evaluate();
+      let boatingSkill = { sides: 4, modifier: -2 }; // Default dice for unskilled
+      let wildDie = 6;
+      let rollModifier = 0;
 
-      // Display the roll in chat
-      const chatData = {
+      const boat = actor.items.find((item) => item.name === "Boating");
+      console.log(boat);
+      if (boat) {
+        boatingSkill = boat.system.die;
+        wildDie = boat.system["wild-die"].sides;
+        console.log("Boating Skill:", boatingSkill);
+        console.log("Wild Die:", wildDie);
+      }
+      // Construct the roll formula dynamically
+      const dieType = `1d${boatingSkill.sides}`; // Main boating die
+      rollModifier = boatingSkill.modifier || 0; // Modifier, default to 0
+
+      // Build the roll formula AFTER all variables are initialized
+      const rollFormula = `{${dieType},1d${wildDie}}kh + ${rollModifier}`;
+      console.log("RollFormula", rollFormula);
+      // Roll the formula
+      const roll = await new Roll(rollFormula).evaluate({ async: true });
+      console.log("Boating Roll Result:", roll.total);
+
+      // Post to chat
+      ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
-        rolls: [roll],
-        flavor: `Helper Boating Roll`,
-      };
+        content: `
+        <div class="chat-roll-wrapper">
+          <img class="chat-roll-img" src="${actor.img}" alt="${actor.name}" width="40" height="40" />
+          <div class="chat-roll-content">
+        <div class="chat-roll-details">
+          <span class="chat-roll-result">Result: ${roll.total}</span>
+          <span class="chat-roll-formula" style="margin-left: .25rem;">Formula: <br/>${rollFormula}</span>
+        </div>
+          </div>
+        </div>
+        `,
+      });
 
-      ChatMessage.create(chatData);
-
-      // Calculate helper bonus
+      // Calculate helper bonus based on roll result
       const rollTotal = roll.total;
       let modifier = 0;
       if (rollTotal >= 8) {
         modifier = 2;
       } else if (rollTotal >= 4) {
         modifier = 1;
+      } else if (rollTotal <= 1 + rollModifier) {
+        modifier = -2; // Handle this case earlier
       } else if (rollTotal <= 3) {
-        modifier = -1;
-      } else if (rollTotal === 0) {
-        modifier = -2;
+        modifier = 0;
       }
 
       helpingBonus += modifier;
-      console.log("helpinh", helpingBonus);
+      console.log(`${actor.name} contributed a modifier of ${modifier}.`);
 
       // Add to roll details with type
       rollDetails.push({
@@ -406,72 +432,129 @@ export async function crewBoatingCheck() {
 
   // Roll for Navigator
   if (navigation.navigator) {
-    const actor = game.actors.get(navigation.navigator.actorId);
-    if (actor) {
-      const rollFormula = `{1d10x + ${helpingBonus}}kh`;
-      const roll = await new Roll(rollFormula).evaluate();
+    let boatingSkill = { sides: 4, modifier: -2 }; // Default dice for unskilled
+    let wildDie = 6;
+    let rollModifier = 0;
 
-      // Display the roll in chat
-      const chatData = {
-        speaker: ChatMessage.getSpeaker({ actor }),
-        rolls: [roll],
-        flavor: `Navigator Boating Roll`,
-      };
+    const navigationActor = game.actors.get(navigation.navigator.actorId);
 
-      ChatMessage.create(chatData);
-
-      // Calculate navigation bonus
-      const rollTotal = roll.total;
-      if (rollTotal >= 8) {
-        navigationExtraMovement += 1;
-      }
-
-      // Add to roll details with type
-      rollDetails.push({
-        name: actor.name,
-        actorId: actor.id,
-        rollTotal,
-        modifier: helpingBonus,
-        type: "Boating",
-        role: "Navigator",
-      });
+    const boat = navigationActor.items.find((item) => item.name === "Boating");
+    if (boat) {
+      boatingSkill = boat.system.die;
+      wildDie = boat.system["wild-die"].sides;
+      console.log("Boating Skill:", boatingSkill);
+      console.log("Wild Die:", wildDie);
     }
+
+    // Construct the roll formula dynamically
+    const dieType = `1d${boatingSkill.sides}`; // Main boating die
+    rollModifier = boatingSkill.modifier || 0; // Modifier, default to 0
+
+    // Build the roll formula AFTER all variables are initialized
+    const rollFormula = `{${dieType},1d${wildDie}}kh + ${rollModifier} + ${helpingBonus}`;
+    console.log("RollFormula", rollFormula);
+    // Roll the formula
+    const roll = await new Roll(rollFormula).evaluate({ async: true });
+    console.log("Navigator Roll Result:", roll.total);
+
+    // Post to chat
+    ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: navigationActor }),
+      content: `
+      <div class="chat-roll-wrapper">
+        <img class="chat-roll-img" src="${navigationActor.img}" alt="${navigationActor.name}" width="40" height="40" />
+        <div class="chat-roll-content">
+          <div class="chat-roll-details">
+            <span class="chat-roll-result">Result: ${roll.total}</span>
+            <span class="chat-roll-formula" style="margin-left: .25rem;">Formula: <br/>${rollFormula}</span>
+          </div>
+        </div>
+      </div>
+      `,
+    });
+
+    // Calculate navigation bonus
+    const rollTotal = roll.total;
+    if (rollTotal >= 8) {
+      navigationExtraMovement += 1;
+    }
+
+    // Add to roll details with type
+    rollDetails.push({
+      name: navigationActor.name,
+      actorId: navigationActor.id,
+      rollTotal,
+      modifier: helpingBonus,
+      type: "Boating",
+      role: "Navigator",
+    });
+
+    // Removed the duplicate roll logic here
   }
 
   // Roll for Spellcaster
   if (navigation.caster) {
-    const actor = game.actors.get(navigation.caster.actorId);
-    if (actor) {
-      const rollFormula = `1d10x`;
-      const roll = await new Roll(rollFormula).evaluate();
+    let spellcastingSkill = { sides: 4, modifier: -2 }; // Default dice for unskilled
+    let wildDie = 6;
+    let rollModifier = 0;
 
-      // Display the roll in chat
-      const chatData = {
-        speaker: ChatMessage.getSpeaker({ actor }),
-        rolls: [roll],
-        flavor: `Spellcaster Zephyr Roll`,
-      };
+    const spellcasterActor = game.actors.get(navigation.caster.actorId);
 
-      ChatMessage.create(chatData);
-
-      // Calculate spellcasting bonus
-      const rollTotal = roll.total;
-      if (rollTotal >= 8) {
-        navigationExtraMovement += 2;
-      } else if (rollTotal >= 4) {
-        navigationExtraMovement += 1;
-      }
-
-      // Add to roll details with type
-      rollDetails.push({
-        name: actor.name,
-        actorId: actor.id,
-        rollTotal,
-        modifier: 0,
-        type: "Spellcasting",
-        role: "Caster",
-      });
+    const spellcastingItem = spellcasterActor.items.find(
+      (item) => item.name === "Spellcasting"
+    );
+    console.log("################ SPELLCASTER ################");
+    console.log(spellcastingItem);
+    if (spellcastingItem) {
+      spellcastingSkill = spellcastingItem.system.die;
+      wildDie = spellcastingItem.system["wild-die"].sides;
+      console.log("Spellcasting Skill:", spellcastingSkill);
+      console.log("Wild Die:", wildDie);
     }
+
+    // Construct the roll formula dynamically
+    const dieType = `1d${spellcastingSkill.sides}`; // Main spellcasting die
+    rollModifier = spellcastingSkill.modifier || 0; // Modifier, default to 0
+
+    // Build the roll formula AFTER all variables are initialized
+    const rollFormula = `{${dieType},1d${wildDie}}kh + ${rollModifier}`;
+    console.log("RollFormula", rollFormula);
+
+    // Roll the formula
+    const roll = await new Roll(rollFormula).evaluate({ async: true });
+    console.log("Spellcasting Roll Result:", roll.total);
+
+    // Post to chat
+    ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: spellcasterActor }),
+      content: `
+      <div class="chat-roll-wrapper">
+      <img class="chat-roll-img" src="${spellcasterActor.img}" alt="${spellcasterActor.name}" width="40" height="40" />
+      <div class="chat-roll-content">
+        <div class="chat-roll-details">
+        <span class="chat-roll-result">Result: ${roll.total}</span>
+        <span class="chat-roll-formula" style="margin-left: .25rem;">Formula: <br/>${rollFormula}</span>
+        </div>
+      </div>
+      </div>
+      `,
+    });
+
+    // Calculate spellcasting bonus
+    const rollTotal = roll.total;
+    if (rollTotal >= 8) {
+      navigationExtraMovement += 2; // Add movement for successful spellcasting
+    }
+
+    // Add to roll details with type
+    rollDetails.push({
+      name: spellcasterActor.name,
+      actorId: spellcasterActor.id,
+      rollTotal,
+      modifier: rollModifier, // Modifier specific to spellcasting
+      type: "Spellcasting",
+      role: "Caster",
+    });
   }
 
   // Compile Final Message
@@ -599,13 +682,5 @@ export async function crewBoatingCheck() {
     } else {
       console.warn("Navigator actor not found.");
     }
-  }
-
-  if (audioPath) {
-    foundry.audio.AudioHelper.play({
-      src: audioPath,
-      volume: 0.8,
-      loop: false,
-    });
   }
 }

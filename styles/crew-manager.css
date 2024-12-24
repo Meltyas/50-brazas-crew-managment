@@ -546,6 +546,8 @@ input.crew-boat-pay-input {
   background: #452044;
   color: #fff;
   padding: 0.25rem;
+  display: flex;
+  align-items: center;
 }
 .chat-roll-modifier {
   background: #352044;
