@@ -523,8 +523,8 @@ export async function crewBoatingCheck() {
                           <div class="chat-roll-content">
                             <div class="chat-roll-name">${detail.name}</div>
                             <div class="chat-roll-details">
-                              <span class="chat-roll-result">Roll Total: ${detail.rollTotal}</span>,
-                              <span class="chat-roll-modifier">Modifier: ${detail.modifier}</span>,
+                              <span class="chat-roll-result">Total ${detail.rollTotal}</span>,
+                              <span class="chat-roll-modifier">Mod ${detail.modifier}</span>,
                               <span class="chat-roll-type">${detail.type}</span>
 
                             </div>
