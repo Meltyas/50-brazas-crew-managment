@@ -33,6 +33,7 @@ export default class CrewManagerApp extends Application {
       height: 500,
       resizable: true,
       minimizable: true,
+      classes: ["window-glassed"],
     });
   }
 

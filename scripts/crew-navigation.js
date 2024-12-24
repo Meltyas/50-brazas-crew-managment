@@ -5,6 +5,10 @@ export async function addNavigator() {
     ui.notifications.warn("Please select at least one token to add.");
     return;
   }
+  if (selected.length > 1) {
+    ui.notifications.warn("Please select only one token to add as navigator.");
+    return;
+  }
 
   let { crewList, boatPay, navigation } = await fetchCrewData();
   if (!navigation) {
@@ -62,6 +66,10 @@ export async function addCaster() {
   const selected = canvas.tokens.controlled;
   if (selected.length === 0) {
     ui.notifications.warn("Please select at least one token to add.");
+    return;
+  }
+  if (selected.length > 1) {
+    ui.notifications.warn("Please select only one token to add as caster.");
     return;
   }
 
@@ -220,10 +228,13 @@ export async function renderNavigationRoles() {
       const helperActor = game.actors.get(helper.actorId);
       if (helperActor) {
         helpersList.innerHTML += `
-        <div class="role-member">
+        <div class="role-member" data-index="${navigation.helpers.indexOf(
+          helper
+        )}">
           <img src="${helperActor.img}" alt="${helperActor.name}" />
           <span>${helperActor.name}</span>
-          <button id="remove-helper" class="button">X</button>
+          <button id="remove-helper" class="button btn-remove-helper"  >X</button>
+
         </div>
       `;
       } else {
@@ -590,5 +601,11 @@ export async function crewBoatingCheck() {
     }
   }
 
-  foundry.audio.AudioHelper.play({ src: audioPath, volume: 0.8, loop: false });
+  if (audioPath) {
+    foundry.audio.AudioHelper.play({
+      src: audioPath,
+      volume: 0.8,
+      loop: false,
+    });
+  }
 }

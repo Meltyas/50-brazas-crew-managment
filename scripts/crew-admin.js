@@ -232,14 +232,17 @@ export async function renderCrewList(html, crewList, crewNumber, boatPay) {
 
     listHTML += `
       <div class="crew-member" data-index="${index}">
+      <div class="crew-member-image-wrapper">
         <img src="${actor.img}" alt="${actor.name}"/>
+        <button class="btn btn-remove" style=" color: white;">X</button>
+        </div>
         <div class="crew-member-info">
           <span class="crew-member-name">${actor.name}</span><br/>
-          <small>Pay: ${crew.pay}</small>
+          <div class="crew-member-pay-wrapper"><span class="crew-member-pay-ammount">Pay: ${crew.pay}</span>        <button class="btn btn-decrease">-</button>
+        <button class="btn btn-increase">+</button></div>
         </div>
-        <button class="btn btn-decrease" style="margin-right: 5px;">-</button>
-        <button class="btn btn-increase" style="margin-right: 5px;">+</button>
-        <button class="btn btn-remove" style="background-color: red; color: white;">X</button>
+
+
       </div>
     `;
 

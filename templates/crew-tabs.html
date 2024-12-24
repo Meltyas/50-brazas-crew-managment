@@ -43,8 +43,8 @@
 
     <div>
       <button
-        id="add-crew-Padnm"
-        class="button"
+        id="add-crew-members"
+        class="button btn-add-general"
         style="width: 100%; padding: 10px"
       >
         Add Selected Tokens
@@ -138,19 +138,14 @@
 
   <div id="ship-navigation" class="tab-content" style="display: none">
     <div style="text-align: center; margin-bottom: 20px">
-      <button
-        id="navigate-button"
-        class="button"
-        style="padding: 10px 20px; font-size: 16px"
-      >
+      <button id="navigate-button" class="button btn-navigate-navigation">
         Navigate 🚢
       </button>
     </div>
     <div class="boat-stat-inputs">
-      <div class="boat-stat">
-        <label for="consume-resource">
-          <input type="checkbox" id="consume-resource" /> Consume Resource
-        </label>
+      <div class="boat-stat resource">
+        <label for="consume-resource"> Consume Resource </label>
+        <input type="checkbox" id="consume-resource" />
       </div>
 
       <div class="boat-stat">
@@ -211,8 +206,12 @@
             <p class="empty-slot-text">No navigator assigned</p>
           </div>
           <div class="role-section-wrapper">
-            <button id="add-navigator" class="button">Add</button>
-            <button id="remove-navigator" class="button">Remove</button>
+            <button id="add-navigator" class="button btn-add-general">
+              Add
+            </button>
+            <button id="remove-navigator" class="button btn-remove-navigation">
+              Remove
+            </button>
           </div>
         </div>
       </div>
@@ -224,8 +223,15 @@
             <p class="empty-slot-text">No spellcaster assigned</p>
           </div>
           <div class="role-section-wrapper">
-            <button id="add-spellcaster" class="button">Add</button>
-            <button id="remove-spellcaster" class="button">Remove</button>
+            <button id="add-spellcaster" class="button btn-add-general">
+              Add
+            </button>
+            <button
+              id="remove-spellcaster"
+              class="button btn-remove-navigation"
+            >
+              Remove
+            </button>
           </div>
         </div>
       </div>
@@ -234,7 +240,9 @@
     <div class="navigation-helpers">
       <div class="role-section">
         <h3>Helpers</h3>
-        <button id="add-helper" class="button">Add Helper</button>
+        <button id="add-helper" class="button btn-add-general">
+          Add Helper
+        </button>
         <div class="navigator-helper-wrapper">
           <div id="helpers-list" class="role-slot">
             <p class="empty-slot-text">No helpers assigned</p>

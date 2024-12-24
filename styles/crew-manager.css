@@ -44,9 +44,15 @@ input.crew-boat-pay-input {
   display: flex;
   align-items: center;
   margin-bottom: 5px;
-  width: calc(50%);
-  min-width: calc(50%);
-  max-width: calc(50%);
+  width: calc(33%);
+  min-width: calc(33%);
+  max-width: calc(33%);
+}
+
+.crew-member-image-wrapper {
+  margin-right: 8px;
+  position: relative;
+  flex-shrink: 0;
 }
 
 .placeholder-crew-text {
@@ -56,7 +62,8 @@ input.crew-boat-pay-input {
 
 .crew-member-info {
   overflow: hidden;
-  width: 45%;
+  flex-grow: 1;
+  padding-right: 0.25rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -65,8 +72,8 @@ input.crew-boat-pay-input {
 }
 .crew-member img {
   border: 0;
-  margin-right: 8px;
   border-radius: 5px;
+  outline: solid 1px black;
   width: 40px;
   height: 40px;
 }
@@ -139,6 +146,7 @@ input.crew-boat-pay-input {
   padding: 0;
   margin-right: 4px;
   font-size: 12px;
+  margin-bottom: 1px;
 }
 .btn {
   margin-right: 5px;
@@ -149,16 +157,55 @@ input.crew-boat-pay-input {
 }
 
 .crew-member button.btn-remove {
-  background-color: red;
+  background-color: #ed2939;
+  position: absolute;
+  left: -1px;
+  top: 0;
+  opacity: 0;
+  height: 40px;
+  width: 40px;
+  transition: opacity 0.3s;
+}
+
+.crew-member:hover button.btn-remove {
+  opacity: 0.8;
+}
+
+.crew-member button.btn-remove:hover {
+  opacity: 1;
 }
 
 .crew-member button.btn-increase {
+  width: 28px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #5cb85c;
+  font-size: 1.5rem;
+  margin-right: 0;
 }
 
+.crew-member-pay-wrapper {
+  display: flex;
+  padding-bottom: 2px;
+}
+
+.crew-member-pay-ammount {
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
+  display: flex;
+  align-items: center;
+}
 .crew-member button.btn-decrease {
+  width: 28px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #f0ad4e;
-  margin-left: 1rem;
+  font-size: 1.5rem;
+  margin-right: 0;
 }
 
 .crew-member button:hover {
@@ -226,7 +273,27 @@ input.crew-boat-pay-input {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-  flex-basis: 33%;
+  max-width: 33%;
+  overflow: hidden;
+  width: 100%;
+}
+
+.pay-results-item-details {
+  display: flex;
+  flex-direction: column;
+  margin-left: 0.5rem;
+}
+
+.pay-results-item-actor {
+  font-weight: bold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 40%;
+}
+
+.pay-results-item-pay {
+  font-size: 0.7rem;
 }
 
 .pay-results-item.ship {
@@ -234,6 +301,8 @@ input.crew-boat-pay-input {
   align-items: center;
   margin-bottom: 10px;
   flex-basis: 100%;
+  justify-content: flex-start;
+  max-width: 100%;
 }
 
 .pay-chat-member-list {
@@ -243,6 +312,13 @@ input.crew-boat-pay-input {
   flex-wrap: wrap;
   filter: sepia(100%);
 }
+
+.pay-chat-member-list img {
+  border-radius: 3px;
+  border: 0;
+  margin-right: 0.5rem;
+}
+
 .pay-chat-image-list {
   border: 0;
   border-radius: 32px;
@@ -259,10 +335,30 @@ input.crew-boat-pay-input {
   margin-right: 1rem;
 }
 
+.boat-stat {
+  flex-grow: 1;
+  flex-basis: calc(25% - 3rem);
+}
+
+.boat-stat.resource {
+  display: flex;
+  align-items: center;
+}
+
 .navigator-slot-wrapper {
   display: flex;
   justify-content: space-around;
-  gap: 2rem;
+  gap: 0.5rem;
+  max-width: 100%;
+  width: 100%;
+}
+
+.role-slot {
+  width: 100%;
+}
+
+.role-section-wrapper {
+  flex-shrink: 0;
 }
 
 .navigator-helper-wrapper {
@@ -304,13 +400,31 @@ input.crew-boat-pay-input {
   transition: opacity 0.3s;
 }
 
+.btn-remove-helper {
+  background: #ed2939;
+  color: white;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  bottom: 3px;
+  left: -1px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
 .role-member:hover span {
   opacity: 1;
+  z-index: 2;
+}
+
+.role-member:hover .btn-remove-helper {
+  opacity: 0.8;
 }
 
 .role-member img {
   border: 0;
-  border-radius: 100%;
+  border-radius: 5px;
+  border: solid 1px black;
 }
 .chat-roll-summary {
   font-family: Arial, sans-serif;
@@ -453,4 +567,21 @@ input.crew-boat-pay-input {
   border-radius: 8px;
   box-shadow: 0 0 10px;
   margin: 3px;
+}
+
+.btn-add-general {
+  background: #5cb85c;
+  color: white;
+}
+
+.btn-remove-navigation {
+  background: #ed2939;
+  color: white;
+}
+
+.btn-navigate-navigation {
+  background: #3dd1e7;
+  color: black;
+  padding: 10px 20px;
+  font-size: 16px;
 }

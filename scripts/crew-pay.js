@@ -31,7 +31,7 @@ export async function calculateAndDistributePay(html, totalPay) {
   let resultsHTML = "<h3>Pay Distribution</h3>";
   if (boatPay >= 1) {
     resultsHTML += `
-      <div class='pay-results-item ship' style="display: flex; align-items: center; margin-bottom: 10px;">
+      <div class='pay-results-item ship'>
         <div>
           <strong>Partes para el Barco</strong><br/>
           <span>${boatPay} Partes, 🪙${(
@@ -61,11 +61,11 @@ export async function calculateAndDistributePay(html, totalPay) {
       amount: parseInt(result.amount),
     };
     resultsHTML += `
-      <div class='pay-results-item ship'>
-        <img src="${actor.img}" alt="${actor.name}" width="40" height="40" style="margin-right: 10px; border-radius: 5px;"/>
-        <div>
-          <strong>${actor.name}</strong><br/>
-          <small>Pay: ${result.pay}, 🪙${result.amount}</small>
+      <div class='pay-results-item'>
+        <img src="${actor.img}" alt="${actor.name}" width="40" height="40"/>
+        <div class="pay-results-item-details">
+          <div class="pay-results-item-actor">${actor.name}</div>
+          <div class="pay-results-item-pay">Pay: ${result.pay}, 🪙${result.amount}</div>
         </div>
       </div>
     `;
@@ -105,8 +105,10 @@ export async function activatePaymentListeners(html) {
     }
 
     if (actor) {
+      console.log("crewAmount", crew.amount);
       await actor.update({
-        "system.details.currency": actor.system.details.currency + crew.amount,
+        "system.details.currency":
+          actor.system.details.currency + Math.floor(crew.amount),
       });
     }
     html.find("#make-payment-button").hide();
@@ -194,7 +196,7 @@ export async function printPayToChat(totalPay) {
       messageContent += `
       <tbody class="pay-chat"><table>
         <tr>
-          <td colspan="3" style="padding: 10px 5px;">
+          <td colspan="3" >
         <strong>${pay} ${payLabel}</strong> - Total: 🪙${totalAmount} (${totalSharesForGroup} Partes)<br>
         <div class="pay-chat-member-list">
           ${group.members
