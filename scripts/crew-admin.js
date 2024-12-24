@@ -1,3 +1,5 @@
+// crew-admin.js
+
 // This is only for development uses
 export async function clearCrewList() {
   await game.settings.set("crew-manager", "crewData", {
@@ -76,6 +78,7 @@ export async function addCrewMembers() {
         );
         return; // Skip this entry if the actor is not found
       }
+
       console.log(token);
       console.log("token.actor.id", actor.id);
 
@@ -122,6 +125,13 @@ export async function decreasePay(index) {
 }
 
 async function cleanCrewData(crewList, navigation) {
+  // Ensure navigation is always a valid object
+  navigation = navigation || {};
+  // Ensure helpers is always a valid array
+  if (!Array.isArray(navigation.helpers)) {
+    navigation.helpers = [];
+  }
+
   console.log("Before Cleaning Navigation:", navigation);
 
   // Validate Navigator
@@ -172,12 +182,31 @@ export async function validateCrewList() {
     "crewData"
   );
 
+  // In case these are missing from saved data
+  crewList = crewList || [];
+  navigation = navigation || {
+    navigator: null,
+    caster: null,
+    helpers: [],
+    boatHandling: 0,
+    boatMovement: 0,
+    handlingMod: 0,
+  };
+  if (!Array.isArray(navigation.helpers)) {
+    navigation.helpers = [];
+  }
+
   console.log("validateCrewList (Before Clean):", { crewList, navigation });
 
   const validatedData = await cleanCrewData(crewList, navigation);
 
-  console.log("validateCrewList (After Clean):", { crewList, navigation });
+  console.log("validateCrewList (After Clean):", {
+    crewList: validatedData.crewList,
+    navigation: validatedData.navigation,
+  });
 
+  // If something was actually removed from crewList or changed in navigation
+  // you might consider a stricter check. For now, we'll compare lengths.
   if (validatedData.crewList.length !== crewList.length) {
     await saveCrewData(
       validatedData.crewList,
@@ -232,17 +261,18 @@ export async function renderCrewList(html, crewList, crewNumber, boatPay) {
 
     listHTML += `
       <div class="crew-member" data-index="${index}">
-      <div class="crew-member-image-wrapper">
-        <img src="${actor.img}" alt="${actor.name}"/>
-        <button class="btn btn-remove" style=" color: white;">X</button>
+        <div class="crew-member-image-wrapper">
+          <img src="${actor.img}" alt="${actor.name}"/>
+          <button class="btn btn-remove" style=" color: white;">X</button>
         </div>
         <div class="crew-member-info">
           <span class="crew-member-name">${actor.name}</span><br/>
-          <div class="crew-member-pay-wrapper"><span class="crew-member-pay-ammount">Pay: ${crew.pay}</span>        <button class="btn btn-decrease">-</button>
-        <button class="btn btn-increase">+</button></div>
+          <div class="crew-member-pay-wrapper">
+            <span class="crew-member-pay-ammount">Pay: ${crew.pay}</span>
+            <button class="btn btn-decrease">-</button>
+            <button class="btn btn-increase">+</button>
+          </div>
         </div>
-
-
       </div>
     `;
 

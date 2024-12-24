@@ -17,7 +17,7 @@ export async function addNavigator() {
 
   console.log("Before Adding Navigator:", navigation);
 
-  if (navigation.navigator) {
+  if (navigation && navigation.navigator) {
     ui.notifications.warn(
       "There can only be one navigator. Please remove the existing navigator first."
     );
@@ -183,7 +183,7 @@ export async function renderNavigationRoles() {
   // Render Navigator
   const navigatorSlot = document.getElementById("navigator-slot");
   navigatorSlot.innerHTML = "";
-  if (navigation.navigator) {
+  if (navigation && navigation.navigator) {
     const navigatorActor = game.actors.get(navigation.navigator.actorId);
     if (navigatorActor) {
       navigatorSlot.innerHTML = `
@@ -380,7 +380,7 @@ export async function crewBoatingCheck() {
         speaker: ChatMessage.getSpeaker({ actor }),
         content: `
         <div class="chat-roll-wrapper">
-          <img class="chat-roll-img" src="${actor.img}" alt="${actor.name}" width="40" height="40" />
+          <img class="roll-image" src="${actor.img}" alt="${actor.name}" width="40" height="40" />
           <div class="chat-roll-content">
         <div class="chat-roll-details">
           <span class="chat-roll-result">Result: ${roll.total}</span>
@@ -431,7 +431,7 @@ export async function crewBoatingCheck() {
   }
 
   // Roll for Navigator
-  if (navigation.navigator) {
+  if (navigation && navigation.navigator) {
     let boatingSkill = { sides: 4, modifier: -2 }; // Default dice for unskilled
     let wildDie = 6;
     let rollModifier = 0;
@@ -462,7 +462,7 @@ export async function crewBoatingCheck() {
       speaker: ChatMessage.getSpeaker({ actor: navigationActor }),
       content: `
       <div class="chat-roll-wrapper">
-        <img class="chat-roll-img" src="${navigationActor.img}" alt="${navigationActor.name}" width="40" height="40" />
+        <img class="roll-image" src="${navigationActor.img}" alt="${navigationActor.name}" width="40" height="40" />
         <div class="chat-roll-content">
           <div class="chat-roll-details">
             <span class="chat-roll-result">Result: ${roll.total}</span>
@@ -529,7 +529,7 @@ export async function crewBoatingCheck() {
       speaker: ChatMessage.getSpeaker({ actor: spellcasterActor }),
       content: `
       <div class="chat-roll-wrapper">
-      <img class="chat-roll-img" src="${spellcasterActor.img}" alt="${spellcasterActor.name}" width="40" height="40" />
+      <img class="roll-image" src="${spellcasterActor.img}" alt="${spellcasterActor.name}" width="40" height="40" />
       <div class="chat-roll-content">
         <div class="chat-roll-details">
         <span class="chat-roll-result">Result: ${roll.total}</span>
@@ -575,7 +575,7 @@ export async function crewBoatingCheck() {
         .map(
           ([role, details]) => `
             <div class="chat-roll-group chat-roll-${role.toLowerCase()}">
-              <h3 class="chat-roll-role-title">${role}</h3>
+              <span class="chat-roll-role-title">${role}</span>
               <ul class="chat-roll-list">
                 ${details
                   .map((detail) => {
@@ -608,7 +608,7 @@ export async function crewBoatingCheck() {
                       <li class="chat-roll-item">
                         <div class="chat-roll-wrapper">
                           <img
-                            class="chat-roll-img"
+                            class="roll-image"
                             src="${actor.img}"
                             alt="${detail.name}"
                             width="40"
@@ -649,7 +649,7 @@ export async function crewBoatingCheck() {
   }
 
   // Play Sound Based on Navigator's Roll Result
-  if (navigation.navigator) {
+  if (navigation && navigation.navigator) {
     const navigatorActor = game.actors.get(navigation.navigator.actorId);
     if (navigatorActor) {
       const navigatorRoll = rollDetails.find(
