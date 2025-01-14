@@ -464,17 +464,123 @@ input.crew-boat-pay-input {
 .chat-roll-wrapper {
   display: flex;
   align-items: flex-start;
+  position: relative;
+}
+
+.roll-image-holder {
+  display: flex;
+  flex-basis: 40px;
+  margin-right: 10px;
+  position: relative;
 }
 
 .roll-image {
   border-radius: 50%;
-  margin-right: 10px;
-  flex-shrink: 0;
+  flex-shrink: 1;
+  flex-basis: 40px;
+  display: flex;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* Keeps the image within the flex-basis size */
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Prevents the image from overflowing */
+  width: 40px;
+  height: 40px;
+}
+
+.image-success::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 255, 0, 0.8); /* Green border with transparency */
+  opacity: 0;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
+  animation: pulse s ease-in-out 12;
+  pointer-events: none; /* Prevent blocking interactions */
+  width: 40px;
+  height: 40px;
+  opacity: 1;
+}
+
+.image-critical-fail::before {
+  background-color: rgba(255, 0, 0, 0.25);
+
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 0, 0, 0.8); /* Red border with transparency */
+  opacity: 0;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+  animation: pulse s ease-in-out 12;
+  pointer-events: none; /* Prevent blocking interactions */
+  width: 40px;
+  height: 40px;
+  opacity: 1;
+}
+
+.image-raise::before {
+  background-color: rgba(128, 0, 128, 0.25);
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  border: 2px solid rgba(128, 0, 128, 0.75); /* Green border with transparency */
+  opacity: 0;
+  box-shadow: 0 0 15px rgba(128, 0, 128, 0.75);
+  animation: pulse s ease-in-out 12;
+  pointer-events: none; /* Prevent blocking interactions */
+  width: 40px;
+  height: 40px;
+  opacity: 1;
+}
+
+.image-nothing .roll-image {
+  filter: grayscale(100%);
+  opacity: 1;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+    transform: rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: rotate(180deg); /* Half rotation */
+  }
+  100% {
+    opacity: 0.7;
+    transform: rotate(360deg); /* Full rotation */
+  }
+}
+
+.coin-icon-image {
+  background: orange;
+  height: 1em;
+  width: 1em;
+  display: inline-flex;
+  text-align: center;
+  justify-content: center;
+  border-radius: 50%;
+  line-height: 1.2;
 }
 
 .chat-roll-content {
   display: flex;
   flex-direction: column;
+  max-width: 195px;
 }
 
 .chat-roll-name {
@@ -483,7 +589,7 @@ input.crew-boat-pay-input {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: calc(100% - 1rem);
+  max-width: calc(100% - 2rem);
 }
 
 .chat-roll-details {
@@ -503,8 +609,13 @@ input.crew-boat-pay-input {
 }
 
 .chat-roll-extra {
+  background: black;
+  color: white;
   font-weight: 100;
   font-size: 0.8rem;
+  margin-top: 0.5rem;
+  text-align: center;
+  line-height: 2.5;
 }
 
 .chat-roll-helping-bonus {

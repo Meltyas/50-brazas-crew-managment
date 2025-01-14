@@ -374,6 +374,7 @@ export async function crewBoatingCheck() {
       // Roll the formula
       const roll = await new Roll(rollFormula).evaluate({ async: true });
       console.log("Boating Roll Result:", roll.total);
+      console.log("Boating Roll:", roll);
 
       // Post to chat
       ChatMessage.create({
@@ -451,7 +452,7 @@ export async function crewBoatingCheck() {
     rollModifier = boatingSkill.modifier || 0; // Modifier, default to 0
 
     // Build the roll formula AFTER all variables are initialized
-    const rollFormula = `{${dieType},1d${wildDie}}kh + ${rollModifier} + ${helpingBonus}`;
+    const rollFormula = `{${dieType},1d${wildDie}}kh + ${rollModifier} + ${helpingBonus} + ${finalHandling}`;
     console.log("RollFormula", rollFormula);
     // Roll the formula
     const roll = await new Roll(rollFormula).evaluate({ async: true });
@@ -487,6 +488,7 @@ export async function crewBoatingCheck() {
       modifier: helpingBonus,
       type: "Boating",
       role: "Navigator",
+      handlingMod: finalHandling,
     });
 
     // Removed the duplicate roll logic here
@@ -608,26 +610,45 @@ export async function crewBoatingCheck() {
                     }
                     return `
                       <li class="chat-roll-item">
-                        <div class="chat-roll-wrapper">
-                          <img
-                            class="roll-image"
-                            src="${actor.img}"
-                            alt="${detail.name}"
-                            width="40"
-                            height="40"
-                          />
-                          <div class="chat-roll-content">
-                            <div class="chat-roll-name">${detail.name}</div>
-                            <div class="chat-roll-details">
-                              <span class="chat-roll-result">Total ${detail.rollTotal}</span>,
-                              <span class="chat-roll-modifier">Mod ${detail.modifier}</span>,
-                              <span class="chat-roll-type">${detail.type}</span>
-
-                            </div>
-                               <div class="chat-roll-extra">${extraText}</div>
-                              <div class="chat-roll-lost-holder">${lostNavigator}</div>
-                          </div>
-                        </div>
+                      <div class="chat-roll-wrapper">
+                      <div class="roll-image-holder ${
+                        detail.rollTotal < 0
+                          ? "image-critical-fail"
+                          : detail.rollTotal >= 8
+                          ? "image-raise"
+                          : detail.rollTotal <= 3
+                          ? "image-nothing"
+                          : detail.rollTotal >= 4 && detail.rollTotal <= 7
+                          ? "image-success"
+                          : ""
+                      }">
+                      <img
+                      class="roll-image "
+                      src="${actor.img}"
+                      alt="${detail.name}"
+                      /></div>
+                      <div class="chat-roll-content">
+                      <div class="chat-roll-name">${detail.name}</div>
+                      <div class="chat-roll-details">
+                      <span class="chat-roll-result">Total ${
+                        detail.rollTotal
+                      }</span>,
+                      <span class="chat-roll-type">${detail.type}</span>
+                      </div>
+                      ${
+                        detail.role === "Navigator"
+                          ? `
+                      <div class="chat-roll-details">
+                      <span class="chat-roll-result">BoatMods ${detail.handlingMod}</span>,
+                      <span class="chat-roll-modifier">HelpingMods ${detail.modifier}</span>,
+                      </div>
+                      `
+                          : ""
+                      }
+                      <div class="chat-roll-extra">${extraText}</div>
+                      <div class="chat-roll-lost-holder">${lostNavigator}</div>
+                      </div>
+                      </div>
                       </li>`;
                   })
                   .join("")}
@@ -636,7 +657,6 @@ export async function crewBoatingCheck() {
           `
         )
         .join("")}
-      <p class="chat-roll-helping-bonus"><strong>Bono de navegacion por Ayudantes:</strong> ${helpingBonus}</p>
       <p class="chat-roll-navigation-movement"><strong>Movimiento:</strong> ${navigationExtraMovement}</p>
       ${resource}
     </div>

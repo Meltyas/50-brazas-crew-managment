@@ -34,7 +34,7 @@ export async function calculateAndDistributePay(html, totalPay) {
       <div class='pay-results-item ship'>
         <div>
           <strong>Partes para el Barco</strong><br/>
-          <span>${boatPay} Partes, 🪙${(
+          <span>${boatPay} Partes, <span class="coin-icon-image">$</span> ${(
       (boatPay / totalShares) *
       totalPay
     ).toFixed(0)}</span>
@@ -62,11 +62,11 @@ export async function calculateAndDistributePay(html, totalPay) {
     };
     resultsHTML += `
       <div class='pay-results-item'>
-        <img src="${actor.img}" alt="${actor.name}" width="40" height="40"/>
-        <div class="pay-results-item-details">
-          <div class="pay-results-item-actor">${actor.name}</div>
-          <div class="pay-results-item-pay">Pay: ${result.pay}, 🪙${result.amount}</div>
-        </div>
+      <img src="${actor.img}" alt="${actor.name}" width="40" height="40"/>
+      <div class="pay-results-item-details">
+        <div class="pay-results-item-actor">${actor.name}</div>
+        <div class="pay-results-item-pay">Pay: ${result.pay}, <span class="coin-icon-image">$</span> ${result.amount}</div>
+      </div>
       </div>
     `;
   });
@@ -169,12 +169,12 @@ export async function printPayToChat(totalPay) {
 
   // Add boat pay message if boatPay exists and is greater than 0
   // Add message for single share value
-  messageContent += `<p class="pay-chat-share-value"><strong>Valor por parte:</strong> 🪙${(
+  messageContent += `<p class="pay-chat-share-value"><strong>Valor por parte:</strong> <span class="coin-icon-image">$</span> ${(
     totalPay / totalShares
   ).toFixed(0)}</p>`;
 
   if (boatPay && boatPay > 0) {
-    messageContent += `<p class="pay-chat-boat-pay"><strong>Barco:</strong> ${boatPay} Partes - 🪙${(
+    messageContent += `<p class="pay-chat-boat-pay"><strong>Barco:</strong> ${boatPay} Partes - <span class="coin-icon-image">$</span> ${(
       (boatPay / totalShares) *
       totalPay
     ).toFixed(0)}</p>`;
@@ -197,7 +197,7 @@ export async function printPayToChat(totalPay) {
       <tbody class="pay-chat"><table>
         <tr>
           <td colspan="3" >
-        <strong>${pay} ${payLabel}</strong> - Total: 🪙${totalAmount} (${totalSharesForGroup} Partes)<br>
+        <strong>${pay} ${payLabel}</strong> - Total: <span class="coin-icon-image">$</span> ${totalAmount} (${totalSharesForGroup} Partes)<br>
         <div class="pay-chat-member-list">
           ${group.members
             .map(
